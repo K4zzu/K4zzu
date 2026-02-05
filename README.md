@@ -37,6 +37,7 @@
 
 <br clear="both">
 
-<img src="https://raw.githubusercontent.com/K4zzu/K4zzu/output/snake.svg" alt="Snake animation" />
+![snake gif](https://github.com/K4zzu/K4zzu/blob/output/github-contribution-grid-snake.svg)
 
 ###
+
