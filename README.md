@@ -1,6 +1,13 @@
 <h2 align="left">Hi, What´s Up👋!</h2>
 
-
+<!-- ===== HERO BANNER (terminal) ===== -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"  srcset="./dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./light.svg">
+    <img alt="Juan Manuel — K4zzu" src="./dark.svg" width="100%">
+  </picture>
+</p>
 
 # 💫 About Me:
 <img align="right" height="150" src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHFhanRkYzR2MjQyeWdobmR5dGFmeThxZ2hhZjZtNG0wMmpmYm15bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/8SEnoMhrEeBDa/giphy.gif" />
