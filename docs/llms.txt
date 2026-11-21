@@ -1,0 +1,17 @@
+# Juan Manuel — K4zzu
+
+> Personal portfolio of Juan Manuel (K4zzu), a developer working across software and electronics: automation, security and creative web. The page is drawn as animated ASCII art (a black hole, a star system and a ringed planet).
+
+## Projects
+
+- [MoonSite](https://github.com/K4zzu/MoonSite): lunar landing site navigator built for the NASA Space Apps lunar south-pole challenge. Live: https://moonsite.whatbrainy.com
+- [Rinnegan](https://github.com/K4zzu/Rinnegan): terminal-style OSINT web app with a FastAPI backend. Live: https://k4zzu.github.io/Rinnegan/
+- [Nutripae](https://github.com/K4zzu/Nutripae): balanced-plate check for the school meal programme (PAE) in Neiva.
+- [Nfc_PokeDex](https://github.com/K4zzu/Nfc_PokeDex): Pokédex that registers Pokémon by scanning NFC tags from the browser. Live: https://k4zzu.github.io/Nfc_PokeDex/
+
+## Contact
+
+- [GitHub](https://github.com/K4zzu)
+- [LinkedIn](https://www.linkedin.com/in/juan-manuel-sa/)
+- [Instagram](https://instagram.com/juan_manuel.dev)
+- Discord: .k4zu.

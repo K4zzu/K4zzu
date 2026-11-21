@@ -1,17 +1,19 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// URL pública del sitio: se usa en canonical, Open Graph, JSON-LD, robots.txt y sitemap.xml.
-// Cámbiala con VITE_SITE_URL en un archivo .env (ver .env.example).
-const DEFAULT_SITE_URL = 'https://k4zzu.github.io/';
+// Publicación en GitHub Pages desde la rama main, carpeta /docs del repo K4zzu/K4zzu:
+// la web queda en https://k4zzu.github.io/K4zzu/
+// Se puede cambiar con VITE_SITE_URL y VITE_BASE en un archivo .env (ver .env.example).
+const DEFAULT_SITE_URL = 'https://k4zzu.github.io/K4zzu/';
+const DEFAULT_BASE = '/K4zzu/';
+export const OUT_DIR = '../docs';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const siteUrl = (env.VITE_SITE_URL || DEFAULT_SITE_URL).replace(/\/?$/, '/');
 
   return {
-    // Ruta base para el despliegue (p. ej. '/K4zzu-web/' en GitHub Pages de un repo).
-    base: env.VITE_BASE || '/',
+    base: env.VITE_BASE || DEFAULT_BASE,
     plugins: [
       react(),
       {
@@ -24,6 +26,8 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       target: 'es2022',
+      outDir: OUT_DIR,
+      emptyOutDir: true,
     },
   };
 });

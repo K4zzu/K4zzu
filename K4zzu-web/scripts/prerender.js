@@ -1,11 +1,12 @@
-// Pre-renderiza la página en dist/index.html y genera robots.txt y sitemap.xml.
+// Pre-renderiza la página en ../docs/index.html y genera robots.txt y sitemap.xml.
 // Se ejecuta después de `vite build` (cliente) y `vite build --ssr` (servidor).
 import { readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const dist = path.join(root, 'dist');
+// Carpeta publicada por GitHub Pages (main → /docs), definida en vite.config.js
+const dist = path.join(root, '..', 'docs');
 const ssrDir = path.join(root, 'dist-ssr');
 
 const { render } = await import(pathToFileURL(path.join(ssrDir, 'entry-server.js')).href);
@@ -37,4 +38,4 @@ await writeFile(
 );
 
 await rm(ssrDir, { recursive: true, force: true });
-console.log(`✓ pre-renderizado dist/index.html · robots.txt · sitemap.xml (${siteUrl})`);
+console.log(`✓ pre-renderizado docs/index.html · robots.txt · sitemap.xml (${siteUrl})`);

@@ -8,15 +8,15 @@ un agujero negro (hero), un sistema estelar con los proyectos y un planeta con a
 
 ```bash
 npm install
-npm run dev       # servidor de desarrollo
-npm run build     # build de producción + pre-render del HTML + robots.txt + sitemap.xml
-npm run preview   # sirve dist/
+npm run dev       # desarrollo en http://localhost:5173/K4zzu/
+npm run build     # compila a ../docs (lo que publica GitHub Pages) + pre-render + robots.txt + sitemap.xml
+npm run preview   # sirve ../docs en http://localhost:4173/K4zzu/
 npm run lint
 ```
 
 ## Configuración
 
-Copia `.env.example` a `.env`:
+No hace falta para publicar en `https://k4zzu.github.io/K4zzu/`. Sólo si cambia la URL, copia `.env.example` a `.env`:
 
 | Variable        | Uso                                                                    |
 | --------------- | ---------------------------------------------------------------------- |
@@ -53,8 +53,20 @@ scripts/prerender.js      inyecta el HTML renderizado en dist/index.html
 
 ## Despliegue (GitHub Pages)
 
-El workflow `.github/workflows/deploy-web.yml` (en la raíz del repo) compila y publica la web en
-**https://k4zzu.github.io/K4zzu/** cada vez que se hace push a `main` con cambios en `K4zzu-web/`.
-También se puede lanzar a mano desde *Actions → Deploy web to GitHub Pages → Run workflow*.
+La web se publica en **https://k4zzu.github.io/K4zzu/** desde la carpeta `docs/` de la rama `main`
+(en la raíz del repo, junto al README de perfil).
 
-Requisito, una sola vez: *Settings → Pages → Build and deployment → Source: **GitHub Actions***.
+Configuración en GitHub, una sola vez: *Settings → Pages → Deploy from a branch → Branch: `main` · carpeta `/docs` → Save*.
+
+Para publicar cambios:
+
+```bash
+cd K4zzu-web
+npm run build            # regenera ../docs
+cd ..
+git add docs K4zzu-web
+git commit -m "Update web"
+git push                 # GitHub Pages republica solo
+```
+
+`docs/.nojekyll` evita que GitHub procese la carpeta con Jekyll.
