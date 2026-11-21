@@ -10,7 +10,7 @@ import Typewriter from './Typewriter.jsx';
 import './Hero.css';
 
 export default function Hero() {
-  const { paused, toggle } = useMotion();
+  const { paused } = useMotion();
   const headerRef = useRef(null);
   const canvasRef = useRef(null);
   const gate = useRef(frameGate(30));
@@ -32,9 +32,6 @@ export default function Hero() {
       <nav className="hero__nav" aria-label="Main">
         <a href="#projects">projects</a>
         <a href="#contact">contact</a>
-        <button type="button" className="hero__motion" onClick={toggle}>
-          {paused ? '▶ play motion' : '❚❚ pause motion'}
-        </button>
       </nav>
 
       <div className="hero__copy">

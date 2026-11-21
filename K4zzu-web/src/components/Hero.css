@@ -23,20 +23,6 @@
   }
 }
 
-.hero__motion {
-  padding: 4px 10px;
-  border: 1px solid var(--line-soft);
-  background: rgb(0 0 0 / 0.6);
-  color: var(--muted);
-  font-size: 0.8125rem;
-  transition: color 200ms, border-color 200ms;
-
-  &:hover {
-    color: var(--green-hi);
-    border-color: var(--green-line);
-  }
-}
-
 .hero__copy {
   position: absolute;
   inset-inline: clamp(24px, 5vw, 72px) 24px;

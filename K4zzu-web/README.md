@@ -39,7 +39,7 @@ src/
   lib/
     renderers/            blackHole.js, planet.js, system.js (portados del diseño)
     pointer.js, scene.js  puntero compartido y utilidades de escena
-scripts/prerender.js      inyecta el HTML renderizado en dist/index.html
+scripts/prerender.js      inyecta el HTML renderizado en ../docs/index.html
 ```
 
 ## SEO y accesibilidad
@@ -47,7 +47,7 @@ scripts/prerender.js      inyecta el HTML renderizado en dist/index.html
 - HTML pre-renderizado: el contenido (h1, proyectos, enlaces) es visible para buscadores sin ejecutar JS.
 - Meta description, canonical, Open Graph / Twitter Card con `og-image.png` (1200×630), JSON-LD `ProfilePage` + `Person`, `robots.txt`, `sitemap.xml`, `llms.txt`, manifest.
 - Los canvas son decorativos (`aria-hidden`); el texto animado tiene su equivalente real oculto visualmente.
-- Botón visible para pausar el movimiento (WCAG 2.2.2); arranca en pausa con `prefers-reduced-motion: reduce`.
+- Con `prefers-reduced-motion: reduce` en el sistema, las animaciones se muestran como imagen estática.
 - Terminal con `<form>` nativo (seguro con IME), salida en `role="log"`, botones con `aria-pressed`.
 - Lighthouse (móvil): Accesibilidad 100 · Buenas prácticas 100 · SEO 100.
 
