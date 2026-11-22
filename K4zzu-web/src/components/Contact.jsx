@@ -16,6 +16,11 @@ const TILT_SIN = 0.342;
 const ORBIT_SPEED = 0.255;
 const START_ANGLES = [0.4, 3.5416, 1.9708, 5.1124];
 const FLASH_MS = 900;
+// Máximo desplazamiento horizontal de la elipse inclinada, en unidades de su radio mayor
+const ORBIT_X_EXTENT = Math.hypot(TILT_COS, 0.28 * TILT_SIN);
+// Por debajo de este ancho (px) el planeta se coloca encima de la terminal
+const NARROW = 760;
+const NARROW_CANVAS_H = 440;
 
 async function copyText(text) {
   try {
@@ -33,6 +38,7 @@ export default function Contact({ onSelectProject }) {
   const canvasRef = useRef(null);
   const orbitRef = useRef(null);
   const termRef = useRef(null);
+  const zoneRef = useRef(null);
   const bodyRefs = useRef([]);
   const runRef = useRef(null);
   const gate = useRef(frameGate(30));
@@ -74,25 +80,52 @@ export default function Contact({ onSelectProject }) {
     o.style.visibility = op < 0.02 ? 'hidden' : 'visible';
     o.style.pointerEvents = op < 0.6 ? 'none' : 'auto';
 
-    // En pantallas anchas el planeta ocupa la franja libre a la derecha de la terminal
-    const wide = b.width >= 760;
-    const term = termRef.current;
-    const L = wide && term ? Math.max(0, term.getBoundingClientRect().right - b.left) : 0;
-    const F = b.width - L;
-    const fx = (L + F / 2) / b.width;
-    const fy = wide ? 0.5 : 0.4;
-    const rx0 = Math.max(60, (F / 2 - 58) / 0.94);
-    const pr = Math.max(20, Math.min(0.27 * b.height, (F / 2 - 12) / 1.786, rx0 * 0.94 - 24));
-    const rx = Math.min(pr * 2.2, Math.max(pr * 1.95, rx0));
+    const bodies = bodyRefs.current.filter(Boolean);
+    const zone = zoneRef.current;
+    let fx, fy, pr, rx;
+    // Caja del canvas: toda la sección en escritorio; en móvil sólo la zona del planeta,
+    // para que los caracteres sean finos y el planeta tenga detalle.
+    let canvasTop = 0;
+    let H = b.height;
+    if (b.width >= NARROW || !zone) {
+      // En pantallas anchas el planeta ocupa la franja libre a la derecha de la terminal
+      const term = termRef.current;
+      const L = term ? Math.max(0, term.getBoundingClientRect().right - b.left) : 0;
+      const F = b.width - L;
+      fx = (L + F / 2) / b.width;
+      fy = 0.5;
+      const rx0 = Math.max(60, (F / 2 - 58) / 0.94);
+      pr = Math.max(20, Math.min(0.27 * b.height, (F / 2 - 12) / 1.786, rx0 * 0.94 - 24));
+      rx = Math.min(pr * 2.2, Math.max(pr * 1.95, rx0));
+    } else {
+      // En móvil el planeta tiene su propia zona entre el título y la terminal, y la órbita
+      // se ajusta para que el enlace más ancho no se salga por los lados.
+      const z = zone.getBoundingClientRect();
+      fx = 0.5;
+      fy = (z.top - b.top + z.height / 2) / b.height;
+      const pillHalf = Math.max(0, ...bodies.map((el) => el.offsetWidth)) * 0.54;
+      rx = Math.max(60, (b.width / 2 - pillHalf - 8) / ORBIT_X_EXTENT);
+      pr = Math.max(20, Math.min(rx / 1.95, z.height * 0.32));
+      const zoneCy = fy * b.height;
+      H = Math.min(b.height, Math.max(z.height + 120, NARROW_CANVAS_H));
+      canvasTop = Math.max(0, Math.min(b.height - H, zoneCy - H / 2));
+    }
+    const cv = canvasRef.current;
+    if (cv) {
+      const top = `${canvasTop.toFixed(0)}px`;
+      const height = `${H.toFixed(0)}px`;
+      if (cv.style.top !== top) cv.style.top = top;
+      if (cv.style.height !== height) cv.style.height = height;
+    }
     const ry = rx * 0.28;
-    s.centre.x = ((fx - 0.5) * b.width) / b.height;
-    s.centre.y = fy - 0.5;
-    s.centre.k = pr / (0.19 * b.height);
+    // Centro y escala del planeta en coordenadas del canvas (unidades de su alto)
+    s.centre.x = ((fx - 0.5) * b.width) / H;
+    s.centre.y = (fy * b.height - canvasTop) / H - 0.5;
+    s.centre.k = pr / (0.19 * H);
     o.style.left = `${fx * 100}%`;
     o.style.top = `${fy * 100}%`;
     if (op < 0.02) return;
 
-    const bodies = bodyRefs.current.filter(Boolean);
     const held = bodies.some((el) => el.matches(':hover, :focus-visible'));
     bodies.forEach((el, i) => {
       if (animate && !held) s.angles[i] += ORBIT_SPEED * dt;
@@ -168,6 +201,8 @@ export default function Contact({ onSelectProject }) {
       </div>
 
       <div className="contact__body container">
+        {/* Hueco para el planeta en móvil (en escritorio el planeta va a la derecha de la terminal) */}
+        <div ref={zoneRef} className="contact__zone" aria-hidden="true" />
         <Terminal
           ref={termRef}
           runRef={runRef}

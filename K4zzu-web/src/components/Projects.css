@@ -73,6 +73,11 @@
   white-space: nowrap;
   transition: border-color 200ms, color 200ms;
 
+  @media (width < 760px) {
+    padding: 2px 8px;
+    font-size: 0.75rem;
+  }
+
   .planet[data-selected] & {
     border-color: var(--green-line);
     color: var(--green-hi);
@@ -108,6 +113,11 @@
 .projects__space {
   flex: 1 1 460px;
   min-block-size: 460px;
+
+  /* En móvil el sistema cabe en menos alto (lo limita el ancho) */
+  @media (width < 760px) {
+    min-block-size: 330px;
+  }
 }
 
 .projects__panel-wrap {

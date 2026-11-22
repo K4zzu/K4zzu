@@ -7,6 +7,15 @@
   background: #000;
 }
 
+/* Pantallas verticales: el canvas ocupa la parte de arriba (más detalle por carácter) y se
+   funde hacia el negro; el texto queda debajo sin taparlo */
+@media (max-aspect-ratio: 4 / 5) {
+  .hero .scene-canvas {
+    block-size: 62%;
+    mask-image: linear-gradient(to bottom, #000 78%, transparent);
+  }
+}
+
 .hero__nav {
   position: absolute;
   inset-block-start: 20px;

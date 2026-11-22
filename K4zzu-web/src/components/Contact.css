@@ -77,10 +77,35 @@
   flex-direction: column;
 }
 
+.contact__zone {
+  display: none;
+}
+
 .terminal {
   margin-block: auto;
   inline-size: clamp(360px, 44vw, 520px);
   max-inline-size: 100%;
+}
+
+/* Móvil: título → planeta con los enlaces en órbita → terminal → pie */
+@media (width < 760px) {
+  .contact__body {
+    gap: 20px;
+  }
+
+  .contact__zone {
+    display: block;
+    flex: none;
+    block-size: 260px;
+  }
+
+  .terminal {
+    margin-block: 0;
+  }
+
+  .site-footer {
+    margin-block-start: auto;
+  }
 }
 
 .terminal__log {

@@ -9,20 +9,48 @@ import { PROFILE } from '../data/content.js';
 import Typewriter from './Typewriter.jsx';
 import './Hero.css';
 
+// Semiancho del disco de acreción ya abierto, en unidades del alto de la escena (ROUT · zoom final)
+const DISC_HALF_WIDTH = 0.76;
+// Ancho del disco respecto al de la pantalla cuando hay que encogerlo
+const DISC_COVER = 1.3;
+
 export default function Hero() {
   const { paused } = useMotion();
   const headerRef = useRef(null);
   const canvasRef = useRef(null);
   const gate = useRef(frameGate(30));
+  const view = useRef({ scale: 1, compactHud: false });
   // El disco termina de abrirse hacia t≈8 s; el fotograma 330 (11 s) muestra la escena completa.
-  const scene = useAsciiScene(canvasRef, { create: createBlackHoleRenderer, resetOnResize: false, stillFrame: 330 });
+  const scene = useAsciiScene(canvasRef, {
+    create: createBlackHoleRenderer,
+    extra: { view: view.current },
+    resetOnResize: false,
+    stillFrame: 330,
+  });
+
+  // En pantallas estrechas el disco (≈1,5 veces el alto de ancho) no cabe: se encoge hasta que
+  // ocupa algo más que el ancho disponible (los bordes del disco son tenues y pueden salirse).
+  const fitView = () => {
+    const cv = canvasRef.current;
+    if (!cv) return;
+    const { width, height } = cv.getBoundingClientRect();
+    if (!height) return;
+    const v = view.current;
+    v.scale = Math.min(1, ((width / height) * 0.5 * DISC_COVER) / DISC_HALF_WIDTH);
+    v.compactHud = width < 600;
+  };
 
   useAnimationLoop(headerRef, {
     paused,
     step: (now) => {
-      if (gate.current(now)) scene.frame((rect) => pointer.y <= rect.bottom);
+      if (!gate.current(now)) return;
+      fitView();
+      scene.frame((rect) => pointer.y <= rect.bottom);
     },
-    still: scene.still,
+    still: () => {
+      fitView();
+      scene.still();
+    },
   });
 
   return (

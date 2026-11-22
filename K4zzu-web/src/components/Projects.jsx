@@ -17,6 +17,9 @@ const ORBITS = [
 ];
 const PLANET_R = [0.075, 0.12, 0.07, 0.07];
 const FOCUS_SCALE = [1, 1, 0.55, 0.85];
+// Por debajo de este ancho (px) el canvas se limita a la zona del sistema, con este alto mínimo
+const NARROW = 760;
+const NARROW_CANVAS_H = 600;
 const pad = (i) => String(i + 1).padStart(2, '0');
 
 export default function Projects({ selected, onSelect }) {
@@ -110,9 +113,29 @@ export default function Projects({ selected, onSelect }) {
     const R = Math.max(70, Math.min(q.width / 2 - 30, (q.height / 2 - 50) / 0.49, b.height * 0.55));
     const CT = Math.cos(sy.tilt);
     const ST = Math.sin(sy.tilt);
-    const H = b.height;
-    sy.x = (cx - b.width / 2) / H;
-    sy.y = (cy - H / 2) / H;
+
+    // En pantallas estrechas la sección es muy alta: si el canvas la cubriera entera, cada carácter
+    // sería enorme y el sistema quedaría en 2-3 glifos. Ahí el canvas sólo cubre la zona del sistema.
+    let canvasTop = 0;
+    let H = b.height;
+    // En móvil el sistema es pequeño (lo limita el ancho): planetas algo más grandes para que se lean
+    const planetBoost = b.width < NARROW ? 1.5 : 1;
+    if (b.width < NARROW) {
+      H = Math.min(b.height, Math.max(q.height + 80, NARROW_CANVAS_H));
+      canvasTop = Math.max(0, Math.min(b.height - H, cy - H / 2));
+    }
+    const cv = canvasRef.current;
+    if (cv) {
+      const top = `${canvasTop.toFixed(0)}px`;
+      const height = `${H.toFixed(0)}px`;
+      if (cv.style.top !== top) cv.style.top = top;
+      if (cv.style.height !== height) cv.style.height = height;
+    }
+    // Coordenadas del renderer: relativas al centro del canvas, en unidades de su alto
+    const toSceneX = (x) => (x - b.width / 2) / H;
+    const toSceneY = (y) => (y - canvasTop - H / 2) / H;
+    sy.x = toSceneX(cx);
+    sy.y = toSceneY(cy);
     sy.sr = (R * 0.12) / H;
     sy.sel = selectedRef.current;
 
@@ -152,9 +175,9 @@ export default function Projects({ selected, onSelect }) {
       const v = ry * Math.sin(p.a);
       p.px = cx + u * CT - v * ST;
       p.py = cy + u * ST + v * CT;
-      p.pr = Math.max(11, R * PLANET_R[i]);
+      p.pr = Math.max(11, R * PLANET_R[i] * planetBoost);
       sy.orbits[i] = { rx: rx / H, ry: ry / H };
-      sy.bodies[i] = { x: (p.px - b.width / 2) / H, y: (p.py - H / 2) / H, r: p.pr / H };
+      sy.bodies[i] = { x: toSceneX(p.px), y: toSceneY(p.py), r: p.pr / H };
     });
 
     planets.forEach((el) => {

@@ -130,13 +130,15 @@ export function createBlackHoleRenderer(cv, opts) {
         }
       }
       let count = 0, hsum = 0, hn = 0;
+      // view.scale (opcional) encoge la escena para pantallas estrechas
+      const Z = zoom * ((opts().view || {}).scale || 1);
       for (let i = 0; i < N; i++) {
         const px = X[i], py = Y[i], mh = 0;
-        const x = px / zoom, y = py / zoom, r = sqrt(x * x + y * y) || 1e-6;
+        const x = px / Z, y = py / Z, r = sqrt(x * x + y * y) || 1e-6;
         const xr = x * CA + y * SA, yr = -x * SA + y * CA, shadow = r < 0.97 * R0;
         let ring = 0, halo = 0, disc = 0, lens = 0, sp = 0, shock = 0, phD = 0, phL = 0, isRing = false;
         if (pRing > 0) {
-          const dr = abs(r - 1.02 * R0), thr = 0.52 * (abs(x) * CW + abs(y) * CH) / (r * H * zoom);
+          const dr = abs(r - 1.02 * R0), thr = 0.52 * (abs(x) * CW + abs(y) * CH) / (r * H * Z);
           if (dr < thr) { let a = atan2(x, -y); if (a < 0) a += TAU; if (a <= pRing) { ring = (0.95 - 0.3 * dr / thr) * ringAmp; isRing = true; } }
         }
         if (!shadow) {
@@ -234,10 +236,13 @@ export function createBlackHoleRenderer(cv, opts) {
       }
       if (opts().showHud ?? true) {
         ctx.font = '17px Consolas, Menlo, monospace'; ctx.textBaseline = 'alphabetic';
-        ctx.textAlign = 'left'; ctx.fillStyle = 'rgb(110,104,120)';
-        ctx.fillText('K4zzu · ' + new Date().toTimeString().slice(0, 8), 24, H - 68);
-        ctx.fillText('spin ' + hud.spin.toFixed(2) + '   heat ' + hud.heat.toFixed(2), 24, H - 46);
-        ctx.fillText('letters ' + String(hud.n).padStart(5, '0'), 24, H - 24);
+        // view.compactHud: en pantallas estrechas sólo el contador de arriba (abajo choca con "scroll")
+        if (!(opts().view || {}).compactHud) {
+          ctx.textAlign = 'left'; ctx.fillStyle = 'rgb(110,104,120)';
+          ctx.fillText('K4zzu · ' + new Date().toTimeString().slice(0, 8), 24, H - 68);
+          ctx.fillText('spin ' + hud.spin.toFixed(2) + '   heat ' + hud.heat.toFixed(2), 24, H - 46);
+          ctx.fillText('letters ' + String(hud.n).padStart(5, '0'), 24, H - 24);
+        }
         ctx.textAlign = 'right'; ctx.fillStyle = 'rgb(255,122,182)';
         const label = 't ' + t.toFixed(2).padStart(5, '0') + 's';
         ctx.fillText(label, W - 24, 38);
